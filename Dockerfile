@@ -54,8 +54,10 @@ RUN set -ex \
     && pip install pytz \
     && pip install pyOpenSSL \
     && pip install ndg-httpsclient \
-    && pip install pyasn1 \
-    && pip install apache-airflow[crypto,celery,postgres,hive,jdbc]==$AIRFLOW_VERSION \
+    && pip install pyasn1 
+ADD airflow /airflow
+RUN pip install /airflow \
+    && pip install apache-airflow[crypto,celery,postgres,hive,jdbc] \
     && pip install celery[redis]==3.1.17 \
     && apt-get purge --auto-remove -yqq $buildDeps \
     && apt-get clean \
@@ -67,8 +69,8 @@ RUN set -ex \
         /usr/share/doc \
         /usr/share/doc-base
 
-COPY script/entrypoint.sh /entrypoint.sh
-COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
+COPY docker-airflow/script/entrypoint.sh /entrypoint.sh
+COPY docker-airflow/config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
 
 RUN chown -R airflow: ${AIRFLOW_HOME}
 
