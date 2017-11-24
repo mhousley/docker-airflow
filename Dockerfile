@@ -58,7 +58,7 @@ RUN set -ex \
 ADD airflow /airflow
 RUN pip install /airflow \
     && pip install apache-airflow[crypto,celery,postgres,hive,jdbc] \
-    && pip install celery[redis]==3.1.17 \
+    && pip install celery[redis]==4.1.0 \
     && apt-get purge --auto-remove -yqq $buildDeps \
     && apt-get clean \
     && rm -rf \
