@@ -1,11 +1,4 @@
-# VERSION 1.8.1-1
-# AUTHOR: Matthieu "Puckel_" Roisil
-# DESCRIPTION: Basic Airflow container
-# BUILD: docker build --rm -t puckel/docker-airflow .
-# SOURCE: https://github.com/puckel/docker-airflow
-
 FROM python:3.6-slim
-MAINTAINER Puckel_
 
 # Never prompts the user for choices on installation/configuration of packages
 ENV DEBIAN_FRONTEND noninteractive
@@ -45,6 +38,7 @@ RUN set -ex \
         curl \
         netcat \
         locales \
+	unzip \
     && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
     && locale-gen \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
@@ -57,9 +51,10 @@ RUN set -ex \
     && pip install pyasn1 \
     && pip install celery[redis]==4.1.0 \
     && pip install bcrypt \
-    && pip install snowflake-connector-python
-ADD airflow /airflow
-RUN pip install /airflow \
+    && pip install snowflake-connector-python \
+    && curl -LkO https://github.com/mhousley/incubator-airflow/archive/1.9.0rc6-snowflake-runnow.zip \
+    && unzip 1.9.0rc6-snowflake-runnow.zip \
+    && pip install /incubator-airflow-1.9.0rc6-snowflake-runnow \
     && pip install apache-airflow[crypto,celery,postgres,hive,jdbc] \
     && apt-get purge --auto-remove -yqq $buildDeps \
     && apt-get clean \
@@ -71,8 +66,8 @@ RUN pip install /airflow \
         /usr/share/doc \
         /usr/share/doc-base
 
-COPY docker-airflow/script/entrypoint.sh /entrypoint.sh
-COPY docker-airflow/config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
+COPY script/entrypoint.sh /entrypoint.sh
+COPY config/airflow.cfg ${AIRFLOW_HOME}/airflow.cfg
 
 RUN chown -R airflow: ${AIRFLOW_HOME}
 
