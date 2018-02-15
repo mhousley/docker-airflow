@@ -52,7 +52,7 @@ RUN set -ex \
     && pip install celery[redis]==4.1.0 \
     && pip install bcrypt \
     && pip install snowflake-connector-python \
-    && curl -LkO https://github.com/mhousley/incubator-airflow/archive/${TAG}.zip \
+    && curl -LkO https://github.com/overstock/incubator-airflow/archive/${TAG}.zip \
     && unzip ${TAG}.zip \
     && pip install /incubator-airflow-${TAG} \
     && pip install apache-airflow[crypto,celery,postgres,hive,jdbc] \
